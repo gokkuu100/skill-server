@@ -1,8 +1,6 @@
-// Knexfile.js
-
 module.exports = {
     development: {
-      client: 'mysql2', // or your database client (e.g., 'mysql' or 'sqlite3')
+      client: 'mysql2', 
       connection: {
         host: "localhost",
         user: "goku",
