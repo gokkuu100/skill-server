@@ -1,0 +1,23 @@
+{
+  "development": {
+    "username": "goku",
+    "password": "Goku100!",
+    "database": "skillcode",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  },
+  "test": {
+    "username": "goku",
+    "password": "Goku100!",
+    "database": "skillcode",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  },
+  "production": {
+    "username": "goku",
+    "password": "Goku100!",
+    "database": "skillcode",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  }
+}

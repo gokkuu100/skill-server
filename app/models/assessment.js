@@ -18,7 +18,7 @@ module.exports = (sequelize) => {
     })
     Assessment.associate = (models) => {
         Assessment.belongsTo(models.Mentor, {
-            foreignKey: 'mentorID',
+            foreignKey: 'mentorId',
             as: 'mentors'
         })
         Assessment.hasMany(models.Grade, {
