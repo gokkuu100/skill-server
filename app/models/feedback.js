@@ -9,15 +9,31 @@ module.exports = (sequelize) => {
         comment: {
             type: DataTypes.STRING(255),
             allowNull: false
+        },
+        mentorId: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            references: {
+                model: 'mentors',
+                key: 'id'
+            }
+        },
+        assessmentId: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            references: {
+                model: 'assessments',
+                key: 'id'
+            }
         }
     })
     Feedback.associate = (models) => {
         Feedback.belongsTo(models.Mentor, {
-            foreignKey: 'mentorID',
+            foreignKey: 'mentorId',
             as: 'mentors'
         })
         Feedback.belongsTo(models.Assessment, {
-            foreignKey: 'assessmentID',
+            foreignKey: 'assessmentId',
             as: 'assessments'
         })
     }

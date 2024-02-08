@@ -14,6 +14,14 @@ module.exports = (sequelize) => {
         description: {
             type: DataTypes.STRING(255),
             allowNull: false
+        },
+        mentorId: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            references: {
+                model: 'mentors',
+                key: 'id'
+            }
         }
     })
     Assessment.associate = (models) => {
@@ -22,19 +30,19 @@ module.exports = (sequelize) => {
             as: 'mentors'
         })
         Assessment.hasMany(models.Grade, {
-            foreignKey: 'assessmentID',
+            foreignKey: 'assessmentId',
             as: 'grades'
         })
         Assessment.hasMany(models.Question, {
-            foreignKey: 'assessmentID',
+            foreignKey: 'assessmentId',
             as: 'questions'
         })
         Assessment.hasMany(models.Invite, {
-            foreignKey: 'assessmentID',
+            foreignKey: 'assessmentId',
             as: 'invites'
         })
         Assessment.hasMany(models.Feedback, {
-            foreignKey: 'assessmentID',
+            foreignKey: 'assessmentId',
             as: 'feedbacks'
         })
     }

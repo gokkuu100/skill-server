@@ -6,16 +6,24 @@ module.exports = (sequelize) => {
             type: DataTypes.INTEGER,
             autoIncrement: true,
             primaryKey: true
+        },
+        studentId: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            references: {
+                model: 'students',
+                key: 'id'
+            }
         }
     })
     Notification.associate = (models) => {
+        Notification.hasMany(models.Invite, {
+            foreignKey: 'notificationId',
+            as: 'invites'
+        })
         Notification.belongsTo(models.Student, {
             foreignKey: 'studentId',
             as: 'students'
-        })
-        Notification.belongsTo(models.Invite, {
-            foreignKey: 'inviteId',
-            as: 'invites'
         })
     }
     return Notification;
