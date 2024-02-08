@@ -28,7 +28,7 @@ module.exports = (sequelize) => {
             allowNull: false
         },
         correctChoice: {
-            try: DataTypes.STRING(64),
+            type: DataTypes.STRING(64),
             allowNull: false
         },
         mentorId: {

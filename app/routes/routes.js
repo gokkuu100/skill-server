@@ -23,5 +23,7 @@ const authenticateToken = (req, res, next) => {
 router.post( '/registerMentor', UserController.createMentor )
 router.post('/registerStudent', UserController.createStudent)
 router.post('/login', UserController.login)
+router.post('/assessments', UserController.createAssessment)
+router.post('/questions/:mentorId/:assessmentId', UserController.createQuestions)
 
 module.exports = {router}

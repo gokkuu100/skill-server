@@ -45,6 +45,10 @@ module.exports = (sequelize) => {
             foreignKey: 'assessmentId',
             as: 'feedbacks'
         })
+        Assessment.hasMany(models.Answer, {
+            foreignKey: 'assessmentId',
+            as: 'answers'
+        })
     }
     return Assessment;
 }

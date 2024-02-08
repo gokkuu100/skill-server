@@ -26,6 +26,33 @@ Content-Type: application/json
 
 {
     "email": "sheila@gmail.com",
-    "password": "none"
+    "password": "sheila"
 }
+
+
+###
+POST http://localhost:5000/api/assessments
+Content-Type: application/json
+
+{
+    "title": "Ass1",
+    "description": "This is a test assessment",
+    "mentorId": 1
+}
+
+###
+POST http://localhost:5000/api/questions/1/1
+Content-Type: application/json
+
+{
+    "title": "Question 1",
+    "choice1": "Opt A",
+    "choice2": "Opt B",
+    "choice3": "Opt C",
+    "choice4": "Opt D",
+    "correctChoice": "Option A"
+
+}
+
+###
 

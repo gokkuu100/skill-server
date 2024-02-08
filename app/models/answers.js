@@ -7,19 +7,7 @@ module.exports = (sequelize) => {
             autoIncrement: true,
             primaryKey: true
         },
-        ans1: {
-            type: DataTypes.STRING(64),
-            allowNull: false
-        },
-        ans2: {
-            type: DataTypes.STRING(64),
-            allowNull: false
-        },
-        ans3: {
-            type: DataTypes.STRING(64),
-            allowNull: false
-        },
-        ans4: {
+        chosenAnswer: {
             type: DataTypes.STRING(64),
             allowNull: false
         },
@@ -38,6 +26,14 @@ module.exports = (sequelize) => {
                 model: 'questions',
                 key: 'id'
             }
+        },
+        assessmentId: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            references: {
+                model: 'assessments',
+                key: 'id'
+            }
         }
     })
     Answer.associate = (models) => {
@@ -48,6 +44,10 @@ module.exports = (sequelize) => {
         Answer.belongsTo(models.Question, {
             foreignKey: 'questionId',
             as: 'questions'
+        })
+        Answer.belongsTo(models.Assessment, {
+            foreignKey: 'assessmentId',
+            as: 'assessments'
         })
     }
     return Answer

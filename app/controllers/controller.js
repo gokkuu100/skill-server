@@ -66,9 +66,11 @@ const UserController = {
     },
     createAssessment: async (req, res) => {
         try {
-            const { title, description } = req.body;
+            const { title, description, mentorId } = req.body;
 
-            const newAssessment = await Assessment.create({ title, description })
+            const newAssessment = await Assessment.create({ title, description, mentorId })
+            newAssessment.questions = []
+
             return res.status(201).json(newAssessment)
         } catch (e) {
             console.error(e);
@@ -77,8 +79,19 @@ const UserController = {
     },
     createQuestions: async (req, res) => {
         try {
-            const { title, choice1, choice2, choice3, choice4 } = req.body
-            const newQuestions = await Question.create({ title, choice1, choice2, choice3, choice4 })
+            const { title, choice1, choice2, choice3, choice4, correctChoice } = req.body
+            const { mentorId, assessmentId } = req.params;
+
+            const assessment = await Assessment.findByPk(assessmentId)
+            if (!assessment) {
+                return res.status(404).json({ error: 'Assessment not found'})
+            }
+
+            const newQuestions = await Question.create({ title, choice1, choice2, choice3, choice4, correctChoice, mentorId, assessmentId })
+
+            newQuestions.assessmentId = assessmentId;
+            await newQuestions.save();
+
             res.status(201).json(newQuestions)
         } catch (e) {
             console.error(e);
@@ -87,8 +100,8 @@ const UserController = {
     },
     createAnswers: async (req, res) => {
         try {
-            const { ans1, ans2, ans3, ans4 } = req.body
-            const newAnswers = await Answers.create({ ans1, ans2, ans3, ans4 })
+            const { chosenAnswer,  studentId, questionId, assessmentId } = req.body;
+            const newAnswers = await Answers.create({ chosenAnswer, studentId, questionId, assessmentId  })
             res.status(201).json(newAnswers)
         } catch (e) {
             console.error(e);
