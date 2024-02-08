@@ -35,24 +35,31 @@ POST http://localhost:5000/api/assessments
 Content-Type: application/json
 
 {
-    "title": "Ass1",
+    "title": "Ass3",
     "description": "This is a test assessment",
     "mentorId": 1
 }
 
 ###
-POST http://localhost:5000/api/questions/1/1
+POST http://localhost:5000/api/questions/1/3
 Content-Type: application/json
 
 {
-    "title": "Question 1",
+    "title": "Question 4",
     "choice1": "Opt A",
     "choice2": "Opt B",
     "choice3": "Opt C",
     "choice4": "Opt D",
-    "correctChoice": "Option A"
+    "correctChoice": "Opt A"
 
 }
 
 ###
+POST http://localhost:5000/api/answers
+Content-Type: application/json
 
+{
+    "studentId": 1,
+    "assessmentId": 3,
+    "answers": ["Opt A", "Opt B", "Opt C", "Opt D" ]
+}

@@ -25,5 +25,6 @@ router.post('/registerStudent', UserController.createStudent)
 router.post('/login', UserController.login)
 router.post('/assessments', UserController.createAssessment)
 router.post('/questions/:mentorId/:assessmentId', UserController.createQuestions)
+router.post('/answers', UserController.submitAnswer)
 
 module.exports = {router}

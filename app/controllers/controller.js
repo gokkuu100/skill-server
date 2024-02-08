@@ -108,6 +108,67 @@ const UserController = {
             res.status(500).json({ error: 'Internal Server Error'})
         }
     },
+    submitAnswer: async (req, res) => {
+        try {
+            const { studentId, assessmentId, answers } = req.body;
+
+            // validate if assessment and student exists
+            const assessment = await Assessment.findByPk(assessmentId)
+            const student = await Student.findByPk(studentId)
+
+            if (!assessment || !student) {
+                return res.status(404).json({ error: 'Assessment or student not found'})
+            }
+
+            const questions = await Question.findAll({
+                where: { assessmentId }
+            })
+
+            if (!questions || questions.length === 0) {
+                return res.status(404).json({ error: 'Assessment has no questions'})
+            }
+
+            // validates if number of answers matches number of questions 
+            if (answers.length !== questions.length) {
+                return res.status(400).json({ error: 'Invalid number of answers submitted'})
+            }
+
+            // Calculate the grade
+            let correctAnswers = 0;
+
+            for (let i = 0; i < questions.length; i++) {
+                const question = questions[i];
+                const submittedAnswer = answers[i];
+
+                // Check if the submitted answer is correct
+                if (question.correctChoice === submittedAnswer) {
+                correctAnswers++;
+                }
+
+                // Save the answer to the database
+                await Answers.create({
+                chosenAnswer: submittedAnswer,
+                studentId,
+                questionId: question.id,
+                assessmentId,
+                })};
+            // calculate percentage
+            const percentage = (correctAnswers / questions.length) * 100;
+
+            // Save the grade to the database
+            const grade = await Grade.create({
+                studentId,
+                assessmentId,
+                grade: percentage,
+            });
+
+            return res.status(200).json({ grade });
+        } catch (error) {
+            console.log(err);
+            return res.status(500).json({error: "Error submitting assessment" })
+        }
+        
+    },
     createGrade: async (req, res) => {
         try {
             const { grade } = req.body;
