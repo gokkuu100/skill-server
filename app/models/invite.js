@@ -33,14 +33,6 @@ module.exports = (sequelize) => {
                 model: 'assessments',
                 key: 'id'
             }
-        },
-        notificationId: {
-            type: DataTypes.INTEGER,
-            allowNull: false,
-            references: {
-                model:'notifications',
-                key: 'id'
-            }
         }
     })
     Invite.associate = (models) => {
@@ -51,14 +43,10 @@ module.exports = (sequelize) => {
         Invite.belongsTo(models.Student, {
             foreignKey: 'studentId',
             as: 'students'
-        }),
+        })
         Invite.belongsTo(models.Assessment, {
             foreignKey: 'assessmentId',
             as: 'assessments'
-        }),
-        Invite.belongsTo(models.Notification, {
-            foreignKey: 'notificationId',
-            as: 'notifications'
         })
     }
     return Invite;

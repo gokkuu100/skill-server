@@ -13,6 +13,23 @@ const Feedback = db.Feedback
 const Invite = db.Invite
 const Notification = db.Notification
 
+const sendNotification = async (studentId, details) => {
+    // Assuming you have a notification service or function to send the notification
+    // In this example, we'll use console.log as a simple messaging service
+    try {
+        const message = `New ${details.type} received: ${details.assessmentName}`;
+        console.log(`Sending message to student ${studentId}: ${message}`);
+        // In a real scenario, you would call a messaging or push notification service here
+        // Example: notificationService.send(studentId, message);
+
+        return true; // Success
+    } catch (error) {
+        console.error(`Error sending notification to student ${studentId}:`, error);
+        return false; // Failure
+    }
+};
+
+
 const UserController = {
     createMentor: async (req, res) => {
         try {
@@ -167,48 +184,110 @@ const UserController = {
             console.log(err);
             return res.status(500).json({error: "Error submitting assessment" })
         }
-        
     },
-    createGrade: async (req, res) => {
+    sendInvite: async (req, res) => {
         try {
-            const { grade } = req.body;
-            const newGrade = await Grade.create({ grade })
-            res.status(201).json(newGrade)
-        } catch (e) {
-            console.error(e);
-            res.status(500).json({ error: 'Internal Server Error'})
+            const { mentorId, studentId, assessmentId } = req.body;
+    
+            const mentor = await Mentor.findByPk(mentorId);
+            const student = await Student.findByPk(studentId);
+            const assessment = await Assessment.findByPk(assessmentId);
+    
+            if (!mentor || !student || !assessment) {
+                return res.status(404).json({ error: 'Mentor, student, or assessment not found' });
+            }
+    
+            const newInvite = await Invite.create({
+                mentorId, studentId, assessmentId
+            });
+    
+            // Add notification details
+            const notificationDetails = {
+                type: 'invite',
+                assessmentName: assessment.title
+            };
+    
+            // Call a function to send the notification to the student
+            sendNotification(studentId, notificationDetails);
+    
+            return res.status(201).json({ newInvite });
+        } catch (error) {
+            console.error(error);
+            return res.status(500).json({ error: 'Internal Server Error' });
         }
     },
-    createFeedback: async (req, res) => {
+    getNotification: async (req, res) => {
         try {
-            const { comment } = req.body;
-            const newFeedback = await Feedback.create({ comment })
-            res.status(201).json(newFeedback)
-        } catch (e) {
-            console.error(e);
-            res.status(500).json({ error: 'Internal Server Error'})
+            const { studentId } = req.params;
+    
+            // Find invites associated with the student
+            const invites = await Invite.findAll({
+                where: {
+                    studentId,
+                    status: 'pending', // You can modify this based on your requirements
+                },
+                include: [
+                    {
+                        model: Assessment,
+                        as: 'assessments',
+                        attributes: ['title'], // Only include the assessment title in the result
+                    },
+                ],
+            });
+    
+            // Extract assessment names from the invites
+            const assessmentNames = invites.map(invite => invite.assessments.title);
+    
+            return res.status(200).json({ assessmentNames });
+        } catch (error) {
+            console.error(error);
+            return res.status(500).json({ error: 'Internal Server Error' });
         }
     },
-    createInvite: async (req, res) => {
+    respondToInvite: async (req, res) => {
         try {
-            const { status } = req.body
-            const newInvite = await Invite.create({ status })
-            res.status(201).json(newInvite)
-        } catch (e) {
-            console.error(e);
-            res.status(500).json({ error: 'Internal Server Error'})
-        }
-    },
-    createNotifications: async (req, res) => {
-        try {
-            const { studentId, inviteId } = req.body;
-            const newNotifications = await Notification.create({ studentId, inviteId })
-            res.status(201).json(newNotifications)
-        } catch (e) {
-            console.error(e);
-            res.status(500).json({ error: 'Internal Server Error'})
+            const { inviteId, response } = req.body;
+
+            // find the invite
+            const invite = await Invite.findByPk(inviteId)
+            if (!invite) {
+                return res.status(404).json({ error: 'Invite not found'})
+            }
+            invite.status = response;
+            await invite.save();
+
+            return res.status(200).json({ invite })
+        } catch (error) {
+            return res.status(500).json({ error: 'Internal Server Error'})
         }
     }
 }
 
 module.exports = {UserController}
+
+// getNotification: async (req, res) => {
+//     try {
+//         const { studentId } = req.params;
+
+//         const invites = await Invite.findAll({
+//             where: { studentId },
+//             include: [
+//                 { model: Assessment, as: 'assessments', required: true } // Include assessment details
+//             ]
+//         });
+
+//         const notifications = invites.map(invite => ({
+//             id: invite.id,
+//             type: 'invite',
+//             assessmentName: invite.assessment.title, // Access assessment name
+//             status: invite.status,
+//             mentorId: invite.mentorId,
+//             createdAt: invite.createdAt
+//         }));
+
+//         res.status(200).json(notifications);
+//     } catch (error) {
+//         console.error(error);
+//         res.status(500).json({ error: 'Internal Server Error' });
+//     }
+// }

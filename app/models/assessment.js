@@ -37,10 +37,6 @@ module.exports = (sequelize) => {
             foreignKey: 'assessmentId',
             as: 'questions'
         })
-        Assessment.hasMany(models.Invite, {
-            foreignKey: 'assessmentId',
-            as: 'invites'
-        })
         Assessment.hasMany(models.Feedback, {
             foreignKey: 'assessmentId',
             as: 'feedbacks'
