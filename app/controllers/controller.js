@@ -226,17 +226,23 @@ const UserController = {
                     studentId,
                     status: 'pending', // You can modify this based on your requirements
                 },
-                include: [
-                    {
-                        model: Assessment,
-                        as: 'assessments',
-                        attributes: ['title'], // Only include the assessment title in the result
-                    },
-                ],
             });
     
-            // Extract assessment names from the invites
-            const assessmentNames = invites.map(invite => invite.assessments.title);
+            // Extract assessmentIds from the invites
+            const assessmentIds = invites.map(invite => invite.assessmentId);
+    
+            // Fetch assessment titles using the assessmentIds
+            const assessments = await Assessment.findAll({
+                where: {
+                    id: {
+                        [Op.in]: assessmentIds,
+                    },
+                },
+                attributes: ['title'],
+            });
+    
+            // Extract assessment names from the assessments
+            const assessmentNames = assessments.map(assessment => assessment.title);
     
             return res.status(200).json({ assessmentNames });
         } catch (error) {
@@ -247,18 +253,32 @@ const UserController = {
     respondToInvite: async (req, res) => {
         try {
             const { inviteId, response } = req.body;
-
+    
             // find the invite
-            const invite = await Invite.findByPk(inviteId)
+            const invite = await Invite.findByPk(inviteId);
             if (!invite) {
-                return res.status(404).json({ error: 'Invite not found'})
+                return res.status(404).json({ error: 'Invite not found' });
             }
+    
+            // Check if the invite status is already set
+            if (invite.status !== 'pending') {
+                return res.status(400).json({ error: 'Invite has already been responded to' });
+            }
+    
+            // Validate the response to be present and either 'accepted' or 'rejected'
+            const validResponses = ['accepted', 'rejected'];
+            if (typeof response !== 'string' || !validResponses.includes(response.toLowerCase())) {
+                return res.status(400).json({ error: 'Invalid response. Must be either "accepted" or "rejected"' });
+            }
+    
+            // Update invite status based on the response
             invite.status = response;
             await invite.save();
-
-            return res.status(200).json({ invite })
+    
+            return res.status(200).json({ invite });
         } catch (error) {
-            return res.status(500).json({ error: 'Internal Server Error'})
+            console.error(error);
+            return res.status(500).json({ error: 'Internal Server Error' });
         }
     }
 }
