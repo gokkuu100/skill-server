@@ -73,6 +73,8 @@ Content-Type: application/json
 
 ###
 GET http://localhost:5000/api/notifications/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInJvbGUiOiJzdHVkZW50IiwiaWF0IjoxNzA3ODEyMTAyLCJleHAiOjE3MDc4MTU3MDJ9.lHwTdtw-xhaVL1OlQgrcGrYTysp-vmPFwQsUPO0kW7A
+
 
 ###
 POST http://localhost:5000/api/acceptInvitation/1
