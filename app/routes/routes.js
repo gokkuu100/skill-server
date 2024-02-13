@@ -27,7 +27,7 @@ router.post('/assessments', UserController.createAssessment)
 router.post('/questions/:mentorId/:assessmentId', UserController.createQuestions)
 router.post('/answers', UserController.submitAnswer)
 router.post('/sendInvite', UserController.sendInvite)
-router.post('/acceptInvitation',UserController.respondToInvite)
+router.post('/acceptInvitation/:inviteId',UserController.respondToInvite)
 
 router.get('/notifications/:studentId', UserController.getNotification)
 module.exports = {router}

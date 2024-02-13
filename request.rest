@@ -75,10 +75,10 @@ Content-Type: application/json
 GET http://localhost:5000/api/notifications/1
 
 ###
-POST http://localhost:5000/api/acceptInvitation
+POST http://localhost:5000/api/acceptInvitation/1
 Content-Type: application/json
 
 {
-    "inviteId": 1,
-    "status": "accepted"
+    "response": "accept"
 }
+

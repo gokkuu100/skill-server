@@ -8,7 +8,7 @@ module.exports = (sequelize) => {
         },
         status: {
             type: DataTypes.STRING(10),
-            defaultValue: 'pending' // pending, accepted, rejected
+            defaultValue: 'pending'
         },
         mentorId: {
             type: DataTypes.INTEGER,

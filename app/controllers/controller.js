@@ -14,13 +14,9 @@ const Invite = db.Invite
 const Notification = db.Notification
 
 const sendNotification = async (studentId, details) => {
-    // Assuming you have a notification service or function to send the notification
-    // In this example, we'll use console.log as a simple messaging service
     try {
         const message = `New ${details.type} received: ${details.assessmentName}`;
         console.log(`Sending message to student ${studentId}: ${message}`);
-        // In a real scenario, you would call a messaging or push notification service here
-        // Example: notificationService.send(studentId, message);
 
         return true; // Success
     } catch (error) {
@@ -150,19 +146,19 @@ const UserController = {
                 return res.status(400).json({ error: 'Invalid number of answers submitted'})
             }
 
-            // Calculate the grade
+            // calculatez the grade
             let correctAnswers = 0;
 
             for (let i = 0; i < questions.length; i++) {
                 const question = questions[i];
                 const submittedAnswer = answers[i];
 
-                // Check if the submitted answer is correct
+                // checks if the submittsd answer is correct
                 if (question.correctChoice === submittedAnswer) {
                 correctAnswers++;
                 }
 
-                // Save the answer to the database
+                // saves the answer to the database
                 await Answers.create({
                 chosenAnswer: submittedAnswer,
                 studentId,
@@ -172,7 +168,7 @@ const UserController = {
             // calculate percentage
             const percentage = (correctAnswers / questions.length) * 100;
 
-            // Save the grade to the database
+            // save the grade to the database
             const grade = await Grade.create({
                 studentId,
                 assessmentId,
@@ -201,13 +197,13 @@ const UserController = {
                 mentorId, studentId, assessmentId
             });
     
-            // Add notification details
+            // Notification details
             const notificationDetails = {
                 type: 'invite',
                 assessmentName: assessment.title
             };
     
-            // Call a function to send the notification to the student
+            // call a function to send the notification to the student
             sendNotification(studentId, notificationDetails);
     
             return res.status(201).json({ newInvite });
@@ -220,18 +216,18 @@ const UserController = {
         try {
             const { studentId } = req.params;
     
-            // Find invites associated with the student
+            // finds invites associated with the student
             const invites = await Invite.findAll({
                 where: {
                     studentId,
-                    status: 'pending', // You can modify this based on your requirements
+                    status: 'pending',
                 },
             });
     
-            // Extract assessmentIds from the invites
+            // extracts assessmentIds from the invites
             const assessmentIds = invites.map(invite => invite.assessmentId);
     
-            // Fetch assessment titles using the assessmentIds
+            // fetches assessment titles using the assessmentIds
             const assessments = await Assessment.findAll({
                 where: {
                     id: {
@@ -241,7 +237,6 @@ const UserController = {
                 attributes: ['title'],
             });
     
-            // Extract assessment names from the assessments
             const assessmentNames = assessments.map(assessment => assessment.title);
     
             return res.status(200).json({ assessmentNames });
@@ -252,35 +247,30 @@ const UserController = {
     },
     respondToInvite: async (req, res) => {
         try {
-            const { inviteId, response } = req.body;
-    
-            // find the invite
-            const invite = await Invite.findByPk(inviteId);
-            if (!invite) {
-                return res.status(404).json({ error: 'Invite not found' });
+            const { inviteId } = req.params;
+            const { response } = req.body; 
+
+            // validates the responses
+            if (!response || (response !== 'accept' && response !== 'decline')) {
+                return res.status(400).json({ error: 'Invalid response. Must be either accept or decline.' });
             }
-    
-            // Check if the invite status is already set
-            if (invite.status !== 'pending') {
-                return res.status(400).json({ error: 'Invite has already been responded to' });
+
+            // updates the invite status based on the response
+            const updatedInvite = await Invite.findByPk(inviteId);
+            if (!updatedInvite) {
+                return res.status(404).json({ error: 'Invite not found.' });
             }
-    
-            // Validate the response to be present and either 'accepted' or 'rejected'
-            const validResponses = ['accepted', 'rejected'];
-            if (typeof response !== 'string' || !validResponses.includes(response.toLowerCase())) {
-                return res.status(400).json({ error: 'Invalid response. Must be either "accepted" or "rejected"' });
-            }
-    
-            // Update invite status based on the response
-            invite.status = response;
-            await invite.save();
-    
-            return res.status(200).json({ invite });
+
+            // updates the status field
+            updatedInvite.status = response;
+            await updatedInvite.save();
+
+            return res.status(200).json({ message: 'Invite response successfully recorded.' });
         } catch (error) {
             console.error(error);
-            return res.status(500).json({ error: 'Internal Server Error' });
+            return res.status(500).json({ error: 'Internal server error.' });
         }
-    }
+    },
 }
 
 module.exports = {UserController}
