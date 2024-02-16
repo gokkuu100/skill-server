@@ -1,7 +1,7 @@
 const db = require('../models')
 const { Op } = require('sequelize')
-const bcrypt = require('bcrypt') //install lib
-const jwt = require('jsonwebtoken') //install lib
+const bcrypt = require('bcrypt') 
+const jwt = require('jsonwebtoken') 
 
 const Student = db.Student
 const Mentor = db.Mentor
@@ -18,10 +18,10 @@ const sendNotification = async (studentId, details) => {
         const message = `New ${details.type} received: ${details.assessmentName}`;
         console.log(`Sending message to student ${studentId}: ${message}`);
 
-        return true; // Success
+        return true;
     } catch (error) {
         console.error(`Error sending notification to student ${studentId}:`, error);
-        return false; // Failure
+        return false;
     }
 };
 
@@ -125,7 +125,7 @@ const UserController = {
         try {
             const { studentId, assessmentId, answers } = req.body;
 
-            // validate if assessment and student exists
+            // validates if assessment and student exists
             const assessment = await Assessment.findByPk(assessmentId)
             const student = await Student.findByPk(studentId)
 
@@ -271,33 +271,85 @@ const UserController = {
             return res.status(500).json({ error: 'Internal server error.' });
         }
     },
+    getAssessmentDetails: async (req, res) => {
+        try {
+            const { studentId } = req.params;
+
+            // finds completed assessments
+            const invites = await Invite.findAll({
+                where: {
+                    studentId,
+                    status: 'accept', 
+                },
+            });
+
+            // extracts assessmentIds from the accepted invites
+            const assessmentIds = invites.map((invite) => invite.assessmentId);
+
+            if (!assessmentIds.length) {
+                return res.status(200).json({ assessmentDetails: [] });
+            }
+
+            const assessments = await Assessment.findAll({
+                where: {
+                    id: {
+                        [Op.in]: assessmentIds,
+                    },
+                },
+                attributes: ['id', 'title', 'mentorId', 'description'],
+            });
+
+            // fetches mentors associated with the assessment
+            const mentors = await Mentor.findAll({
+                where: {
+                    id: {
+                        [Op.in]: assessments.map((assessment) => assessment.mentorId),
+                    },
+                },
+                attributes: ['id', 'name'],
+            });
+
+            // access mentor names through a map
+            const mentorMap = mentors.reduce((acc, mentor) => {
+                acc[mentor.id] = mentor.name;
+                return acc;
+            }, {});
+
+            // fetches questions associated with each assessment
+            const assessmentDetails = await Promise.all(
+                assessments.map(async (assessment) => {
+                    const questions = await Question.findAll({
+                        where: {
+                            assessmentId: assessment.id,
+                        },
+                        attributes: ['id', 'title', 'choice1', 'choice2', 'choice3', 'choice4', 'correctChoice'],
+                    });
+
+                    const grade = await Grade.findOne({
+                        where: {
+                            studentId,
+                            assessmentId: assessment.id,
+                        },
+                        attributes: ['grade'],
+                    });
+
+                    return {
+                        title: assessment.title,
+                        description: assessment.description,
+                        totalQuestions: questions.length,
+                        isCompleted: !!grade, 
+                        mentor: mentorMap[assessment.mentorId] || null,
+                        grade: grade ? grade.grade : null,
+                    };
+                })
+            );
+
+            return res.status(200).json({ assessmentDetails });
+        } catch (error) {
+            console.error(error);
+            return res.status(500).json({ error: 'Internal Server Error' });
+        }
+    },
 }
 
 module.exports = {UserController}
-
-// getNotification: async (req, res) => {
-//     try {
-//         const { studentId } = req.params;
-
-//         const invites = await Invite.findAll({
-//             where: { studentId },
-//             include: [
-//                 { model: Assessment, as: 'assessments', required: true } // Include assessment details
-//             ]
-//         });
-
-//         const notifications = invites.map(invite => ({
-//             id: invite.id,
-//             type: 'invite',
-//             assessmentName: invite.assessment.title, // Access assessment name
-//             status: invite.status,
-//             mentorId: invite.mentorId,
-//             createdAt: invite.createdAt
-//         }));
-
-//         res.status(200).json(notifications);
-//     } catch (error) {
-//         console.error(error);
-//         res.status(500).json({ error: 'Internal Server Error' });
-//     }
-// }

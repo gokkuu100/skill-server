@@ -32,17 +32,17 @@ POST http://localhost:5000/api/assessments
 Content-Type: application/json
 
 {
-    "title": "Ass1",
-    "description": "This is a test assessment",
+    "title": "Ass2",
+    "description": "This is a test assessment 2",
     "mentorId": 1
 }
 
 ###
-POST http://localhost:5000/api/questions/1/1
+POST http://localhost:5000/api/questions/1/2
 Content-Type: application/json
 
 {
-    "title": "Question 1",
+    "title": "Question 4",
     "choice1": "Opt A",
     "choice2": "Opt B",
     "choice3": "Opt C",
@@ -57,7 +57,7 @@ Content-Type: application/json
 
 {
     "studentId": 1,
-    "assessmentId": 1,
+    "assessmentId": 2,
     "answers": ["Opt A", "Opt B", "Opt A", "Opt D" ]
 }
 
@@ -68,19 +68,23 @@ Content-Type: application/json
 {
     "mentorId": 1,
     "studentId": 1,
-    "assessmentId": 1
+    "assessmentId": 2
 }
 
 ###
 GET http://localhost:5000/api/notifications/1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInJvbGUiOiJzdHVkZW50IiwiaWF0IjoxNzA3ODEyMTAyLCJleHAiOjE3MDc4MTU3MDJ9.lHwTdtw-xhaVL1OlQgrcGrYTysp-vmPFwQsUPO0kW7A
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInJvbGUiOiJzdHVkZW50IiwiaWF0IjoxNzA4MDcyNDk1LCJleHAiOjE3MDgwNzYwOTV9.Q25l0BHJM82g-_fF0wEnuBs5SlNn6wxOLWE5jzFzpmE
 
 
 ###
-POST http://localhost:5000/api/acceptInvitation/1
+POST http://localhost:5000/api/acceptInvitation/2
 Content-Type: application/json
 
 {
     "response": "accept"
 }
+
+###
+GET http://localhost:5000/api/student/1
+Content-Type:  application/json
 
