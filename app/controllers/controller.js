@@ -334,6 +334,7 @@ const UserController = {
                     });
 
                     return {
+                        id: assessment.id,
                         title: assessment.title,
                         description: assessment.description,
                         totalQuestions: questions.length,
