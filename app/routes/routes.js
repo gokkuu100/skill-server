@@ -30,6 +30,7 @@ router.post('/acceptInvitation/:inviteId',UserController.respondToInvite)
 
 router.get('/notifications/:studentId', passport.authenticate('jwt', { session: false }) ,UserController.getNotification)
 router.get('/student/:studentId', UserController.getAssessmentDetails);
+router.get('/questions/:assessmentId', UserController.getAssessmentQuestions)
 
 
 module.exports = {router}

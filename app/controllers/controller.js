@@ -1,7 +1,7 @@
 const db = require('../models')
 const { Op } = require('sequelize')
 const bcrypt = require('bcrypt') 
-const jwt = require('jsonwebtoken') 
+const jwt = require('jsonwebtoken')
 
 const Student = db.Student
 const Mentor = db.Mentor
@@ -345,6 +345,31 @@ const UserController = {
             );
 
             return res.status(200).json({ assessmentDetails });
+        } catch (error) {
+            console.error(error);
+            return res.status(500).json({ error: 'Internal Server Error' });
+        }
+    },
+    getAssessmentQuestions: async (req, res) => {
+        try {
+            const { assessmentId } = req.params;
+    
+            // Find the assessment by ID
+            const assessment = await Assessment.findByPk(assessmentId);
+    
+            if (!assessment) {
+                return res.status(404).json({ error: 'Assessment not found' });
+            }
+    
+            // Fetch questions separately
+            const questions = await Question.findAll({
+                where: {
+                    assessmentId: assessment.id,
+                },
+                attributes: ['id', 'title', 'choice1', 'choice2', 'choice3', 'choice4'],
+            });
+    
+            return res.status(200).json({ questions });
         } catch (error) {
             console.error(error);
             return res.status(500).json({ error: 'Internal Server Error' });

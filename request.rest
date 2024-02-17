@@ -88,3 +88,7 @@ Content-Type: application/json
 GET http://localhost:5000/api/student/1
 Content-Type:  application/json
 
+###
+GET http://localhost:5000/api/questions/1
+Content-Type: application/json
+
