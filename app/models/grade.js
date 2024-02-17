@@ -10,15 +10,31 @@ module.exports = (sequelize) => {
         grade: {
             type: DataTypes.STRING(10),
             allowNull: false
+        },
+        studentId: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            references: {
+                model: 'students',
+                key: 'id'
+            }
+        },
+        assessmentId: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            references: {
+                model: 'assessments',
+                key: 'id'
+            }
         }
     })
     Grade.associate = (models) => {
         Grade.belongsTo(models.Assessment, {
-            foreignKey: 'AssessmentID',
+            foreignKey: 'assessmentId',
             as: 'assessments'
         }),
         Grade.belongsTo(models.Student, {
-            foreignKey: "studentID",
+            foreignKey: "studentId",
             as: 'students'
         })
     }

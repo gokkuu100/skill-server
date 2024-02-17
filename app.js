@@ -1,9 +1,12 @@
 const express = require('express')
 const cors = require('cors');
 const app = express()
+const router = require('./app/routes/routes')
 require('dotenv').config();
 
+app.use(express.json());
 app.use(cors())
+app.use('/api', router.router)
 
 const db = require('./app/models')
 db.sequelize.sync().then(() => {

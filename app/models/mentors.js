@@ -22,19 +22,19 @@ module.exports = (sequelize) => {
     })
     Mentor.associate = (models) => {
         Mentor.hasMany(models.Assessment, {
-            foreignKey: 'mentorID',
+            foreignKey: 'mentorId',
             as: 'assessments'
         }),
         Mentor.hasMany(models.Feedback, {
-            foreignKey: 'mentorID',
+            foreignKey: 'mentorId',
             as: 'feedbacks'
         }),
         Mentor.hasMany(models.Question, {
-            foreignKey:  "mentorID",
+            foreignKey:  "mentorId",
             as: 'questions'
         }),
         Mentor.hasMany(models.Invite, {
-            foreignKey: 'mentorID',
+            foreignKey: 'mentorId',
             as: 'invites'
         })
     }

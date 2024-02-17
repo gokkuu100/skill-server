@@ -7,22 +7,34 @@ module.exports = (sequelize) => {
             autoIncrement: true,
             primaryKey: true
         },
-        ans1: {
+        chosenAnswer: {
             type: DataTypes.STRING(64),
             allowNull: false
         },
-        ans2: {
-            type: DataTypes.STRING(64),
-            allowNull: false
+        studentId: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            references: {
+                model: 'students',
+                key: 'id'
+            }
         },
-        ans3: {
-            type: DataTypes.STRING(64),
-            allowNull: false
+        questionId: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            references: {
+                model: 'questions',
+                key: 'id'
+            }
         },
-        ans4: {
-            type: DataTypes.STRING(64),
-            allowNull: false
-        },
+        assessmentId: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            references: {
+                model: 'assessments',
+                key: 'id'
+            }
+        }
     })
     Answer.associate = (models) => {
         Answer.belongsTo(models.Student, {
@@ -30,8 +42,12 @@ module.exports = (sequelize) => {
             as: 'students'
         })
         Answer.belongsTo(models.Question, {
-            foreignKey: 'questionsId',
+            foreignKey: 'questionId',
             as: 'questions'
+        })
+        Answer.belongsTo(models.Assessment, {
+            foreignKey: 'assessmentId',
+            as: 'assessments'
         })
     }
     return Answer

@@ -27,14 +27,34 @@ module.exports = (sequelize) => {
             type: DataTypes.STRING(64),
             allowNull: false
         },
+        correctChoice: {
+            type: DataTypes.STRING(64),
+            allowNull: false
+        },
+        mentorId: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            references: {
+                model: 'mentors',
+                key: 'id'
+            }
+        },
+        assessmentId: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            references: {
+                model: 'assessments',
+                key: 'id'
+            }
+        }
     })
     Question.associate = (models) => {
         Question.belongsTo(models.Mentor, {
-            foreignKey: 'mentorID',
+            foreignKey: 'mentorId',
             as: 'mentors'
         }),
         Question.belongsTo(models.Assessment, {
-            foreignKey: 'AssessmentID',
+            foreignKey: 'assessmentId',
             as: 'assessments'
         })
     }
