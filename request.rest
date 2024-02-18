@@ -32,13 +32,13 @@ POST http://localhost:5000/api/assessments
 Content-Type: application/json
 
 {
-    "title": "Ass2",
-    "description": "This is a test assessment 2",
+    "title": "Ass3",
+    "description": "This is a test assessment 3",
     "mentorId": 1
 }
 
 ###
-POST http://localhost:5000/api/questions/1/2
+POST http://localhost:5000/api/questions/1/3
 Content-Type: application/json
 
 {
@@ -68,13 +68,12 @@ Content-Type: application/json
 {
     "mentorId": 1,
     "studentId": 1,
-    "assessmentId": 2
+    "assessmentId": 3
 }
 
 ###
 GET http://localhost:5000/api/notifications/1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInJvbGUiOiJzdHVkZW50IiwiaWF0IjoxNzA4MDcyNDk1LCJleHAiOjE3MDgwNzYwOTV9.Q25l0BHJM82g-_fF0wEnuBs5SlNn6wxOLWE5jzFzpmE
-
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInJvbGUiOiJzdHVkZW50IiwiaWF0IjoxNzA4MjM2Mzg5LCJleHAiOjE3MDgyMzk5ODl9.ejx1JAZYFaNlEk_S3Q1Ylm-TXDbko1i0-Ow1IWEvifA
 
 ###
 POST http://localhost:5000/api/acceptInvitation/2

@@ -2,6 +2,7 @@ const db = require('../models')
 const { Op } = require('sequelize')
 const bcrypt = require('bcrypt') 
 const jwt = require('jsonwebtoken')
+const assessment = require('../models/assessment')
 
 const Student = db.Student
 const Mentor = db.Mentor
@@ -234,12 +235,31 @@ const UserController = {
                         [Op.in]: assessmentIds,
                     },
                 },
-                attributes: ['title'],
+                attributes: ['id', 'title', 'mentorId'],
             });
+
+            const mentorIds = assessments.map(assessment => assessment.mentorId)
+            const mentors = await Mentor.findAll({
+                where: {
+                    id: {
+                        [Op.in]: mentorIds
+                    },
+                },
+                attributes: ['id', 'name']
+            })
+
+            // maps mentorId to mentorName
+            const mentorMap = mentors.reduce((acc, mentor) => {
+                acc[mentor.id] = mentor.name;
+                return acc
+            }, {})
     
-            const assessmentNames = assessments.map(assessment => assessment.title);
+            const assessmentDetails = assessments.map(assessment => ({
+                title: assessment.title,
+                mentorName: mentorMap[assessment.mentorId]
+            }));
     
-            return res.status(200).json({ assessmentNames });
+            return res.status(200).json({ assessmentDetails });
         } catch (error) {
             console.error(error);
             return res.status(500).json({ error: 'Internal Server Error' });
