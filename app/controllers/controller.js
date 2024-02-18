@@ -217,7 +217,7 @@ const UserController = {
         try {
             const { studentId } = req.params;
     
-            // finds invites associated with the student
+            // Find invites associated with the student
             const invites = await Invite.findAll({
                 where: {
                     studentId,
@@ -225,10 +225,8 @@ const UserController = {
                 },
             });
     
-            // extracts assessmentIds from the invites
+            // Fetch assessment details
             const assessmentIds = invites.map(invite => invite.assessmentId);
-    
-            // fetches assessment titles using the assessmentIds
             const assessments = await Assessment.findAll({
                 where: {
                     id: {
@@ -237,26 +235,29 @@ const UserController = {
                 },
                 attributes: ['id', 'title', 'mentorId'],
             });
-
-            const mentorIds = assessments.map(assessment => assessment.mentorId)
+    
+            // Fetch mentor details
+            const mentorIds = assessments.map(assessment => assessment.mentorId);
             const mentors = await Mentor.findAll({
                 where: {
                     id: {
-                        [Op.in]: mentorIds
+                        [Op.in]: mentorIds,
                     },
                 },
-                attributes: ['id', 'name']
-            })
-
-            // maps mentorId to mentorName
+                attributes: ['id', 'name'],
+            });
+    
+            // Map mentorId to mentorName
             const mentorMap = mentors.reduce((acc, mentor) => {
                 acc[mentor.id] = mentor.name;
-                return acc
-            }, {})
+                return acc;
+            }, {});
     
+            // Combine data from different tables
             const assessmentDetails = assessments.map(assessment => ({
+                inviteId: invites.find(invite => invite.assessmentId === assessment.id).id,
                 title: assessment.title,
-                mentorName: mentorMap[assessment.mentorId]
+                mentorName: mentorMap[assessment.mentorId],
             }));
     
             return res.status(200).json({ assessmentDetails });
