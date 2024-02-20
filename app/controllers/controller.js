@@ -93,25 +93,40 @@ const UserController = {
     },
     createQuestions: async (req, res) => {
         try {
-            const { title, choice1, choice2, choice3, choice4, correctChoice } = req.body
-            const { mentorId, assessmentId } = req.params;
-
-            const assessment = await Assessment.findByPk(assessmentId)
-            if (!assessment) {
-                return res.status(404).json({ error: 'Assessment not found'})
-            }
-
-            const newQuestions = await Question.create({ title, choice1, choice2, choice3, choice4, correctChoice, mentorId, assessmentId })
-
-            newQuestions.assessmentId = assessmentId;
-            await newQuestions.save();
-
-            res.status(201).json(newQuestions)
+          const { mentorId, assessmentId } = req.params;
+          const questionsData = req.body.questions;
+    
+          const assessment = await Assessment.findByPk(assessmentId);
+          if (!assessment) {
+            return res.status(404).json({ error: 'Assessment not found' });
+          }
+    
+          // Create questions independently
+          const newQuestions = await Question.bulkCreate(
+            questionsData.map((question) => ({
+              title: question.title,
+              choice1: question.choice1,
+              choice2: question.choice2,
+              choice3: question.choice3,
+              choice4: question.choice4,
+              correctChoice: question.correctChoice,
+              mentorId: mentorId,
+              assessmentId: assessmentId,
+            }))
+          );
+    
+          // Manually associate questions with the assessment
+          await Promise.all(newQuestions.map(async (question) => {
+            // Assuming you have a column like 'assessmentId' in the Question model
+            await question.update({ assessmentId: assessment.id });
+          }));
+    
+          res.status(201).json(newQuestions);
         } catch (e) {
-            console.error(e);
-            res.status(500).json({ error: 'Internal Server Error'})
+          console.error(e);
+          res.status(500).json({ error: 'Internal Server Error' });
         }
-    },
+      },
     createAnswers: async (req, res) => {
         try {
             const { chosenAnswer,  studentId, questionId, assessmentId } = req.body;
@@ -399,6 +414,38 @@ const UserController = {
             return res.status(500).json({ error: 'Internal Server Error' });
         }
     },
+    getStudentGrades: async (req, res) => {
+        try {
+          const { studentId } = req.params;
+    
+          // Find all assessments for the given student
+          const assessments = await Assessment.findAll({
+            attributes: ['id', 'title'],
+          });
+    
+          // Find grades for the given student
+          const grades = await Grade.findAll({
+            attributes: ['assessmentId', 'grade'],
+            where: {
+              studentId,
+            },
+          });
+    
+          // Map assessment names and grades
+          const assessmentDetails = assessments.map((assessment) => {
+            const grade = grades.find((g) => g.assessmentId === assessment.id);
+            return {
+              assessmentName: assessment.title,
+              grade: grade ? grade.grade : null,
+            };
+          });
+    
+          return res.status(200).json({ assessmentDetails });
+        } catch (error) {
+          console.error(error);
+          return res.status(500).json({ error: 'Internal Server Error' });
+        }
+      },
 }
 
 module.exports = {UserController}

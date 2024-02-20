@@ -17,7 +17,7 @@ Content-Type: application/json
     "password": "sheila"
 }
 
-###
+### 
 POST http://localhost:5000/api/login
 Content-Type: application/json
 
@@ -32,23 +32,34 @@ POST http://localhost:5000/api/assessments
 Content-Type: application/json
 
 {
-    "title": "Ass6",
-    "description": "This is a test assessment 6",
+    "title": "Ass12",
+    "description": "This is a test assessment 13",
     "mentorId": 1
 }
 
 ###
-POST http://localhost:5000/api/questions/1/6
+POST http://localhost:5000/api/questions/1/12
 Content-Type: application/json
 
 {
-    "title": "Question 1",
-    "choice1": "Opt A",
-    "choice2": "Opt B",
-    "choice3": "Opt C",
-    "choice4": "Opt D",
-    "correctChoice": "Opt A"
-
+  "questions": [
+    {
+      "title": "Question 1",
+      "choice1": "Opt A",
+      "choice2": "Opt B",
+      "choice3": "Opt C",
+      "choice4": "Opt D",
+      "correctChoice": "Opt A"
+    },
+    {
+      "title": "Question 2",
+      "choice1": "Opt X",
+      "choice2": "Opt Y",
+      "choice3": "Opt Z",
+      "choice4": "Opt W",
+      "correctChoice": "Opt Y"
+    }
+  ]
 }
 
 ###
@@ -68,7 +79,7 @@ Content-Type: application/json
 {
     "mentorId": 1,
     "studentId": 1,
-    "assessmentId": 6
+    "assessmentId": 7
 }
 
 ###
@@ -89,5 +100,9 @@ Content-Type:  application/json
 
 ###
 GET http://localhost:5000/api/questions/2
+Content-Type: application/json
+
+###
+GET http://localhost:5000/api/grades/1
 Content-Type: application/json
 
