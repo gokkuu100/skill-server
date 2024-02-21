@@ -32,6 +32,8 @@ router.get('/notifications/:studentId', passport.authenticate('jwt', { session: 
 router.get('/student/:studentId', UserController.getAssessmentDetails);
 router.get('/questions/:assessmentId', UserController.getAssessmentQuestions)
 router.get('/grades/:studentId/', UserController.getStudentGrades)
+router.get('/students', UserController.getAllStudents)
+
 
 
 

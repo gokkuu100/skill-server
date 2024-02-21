@@ -12,9 +12,9 @@ POST http://localhost:5000/api/registerStudent
 Content-Type: application/json
 
 {
-    "name": "sheila", 
-    "email": "sheila@gmail.com",
-    "password": "sheila"
+    "name": "june", 
+    "email": "june@gmail.com",
+    "password": "june"
 }
 
 ### 
@@ -77,10 +77,11 @@ POST http://localhost:5000/api/sendInvite
 Content-Type: application/json
 
 {
-    "mentorId": 1,
-    "studentId": 1,
-    "assessmentId": 7
+    "mentorId": "1",  
+    "studentIds": ["1", "15"],  
+    "assessmentId": "12"  
 }
+
 
 ###
 GET http://localhost:5000/api/notifications/1
@@ -104,5 +105,9 @@ Content-Type: application/json
 
 ###
 GET http://localhost:5000/api/grades/1
+Content-Type: application/json
+
+###
+GET http://localhost:5000/api/students
 Content-Type: application/json
 

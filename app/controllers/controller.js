@@ -199,30 +199,42 @@ const UserController = {
     },
     sendInvite: async (req, res) => {
         try {
-            const { mentorId, studentId, assessmentId } = req.body;
+            const { mentorId, studentIds, assessmentId } = req.body;
     
             const mentor = await Mentor.findByPk(mentorId);
-            const student = await Student.findByPk(studentId);
             const assessment = await Assessment.findByPk(assessmentId);
     
-            if (!mentor || !student || !assessment) {
-                return res.status(404).json({ error: 'Mentor, student, or assessment not found' });
+            if (!mentor || !assessment) {
+                return res.status(404).json({ error: 'Mentor or assessment not found' });
             }
     
-            const newInvite = await Invite.create({
-                mentorId, studentId, assessmentId
-            });
+            const invites = await Promise.all(
+                studentIds.map(async (studentId) => {
+                    const student = await Student.findByPk(studentId);
+                    if (!student) {
+                        return res.status(404).json({ error: `Student with ID ${studentId} not found` });
+                    }
+    
+                    return Invite.create({
+                        mentorId,
+                        studentId,
+                        assessmentId,
+                    });
+                })
+            );
     
             // Notification details
             const notificationDetails = {
                 type: 'invite',
-                assessmentName: assessment.title
+                assessmentName: assessment.title,
             };
     
-            // call a function to send the notification to the student
-            sendNotification(studentId, notificationDetails);
+            // Call a function to send the notification to each student
+            await Promise.all(
+                studentIds.map((studentId) => sendNotification(studentId, notificationDetails))
+            );
     
-            return res.status(201).json({ newInvite });
+            return res.status(201).json({ invites });
         } catch (error) {
             console.error(error);
             return res.status(500).json({ error: 'Internal Server Error' });
@@ -446,6 +458,33 @@ const UserController = {
           return res.status(500).json({ error: 'Internal Server Error' });
         }
       },
+      getAllStudents: async (req, res) => {
+        try {
+            const students = await Student.findAll({
+                attributes: ['id', 'name', 'email'],
+            });
+    
+            return res.status(200).json({ students });
+        } catch (error) {
+            console.error(error);
+            return res.status(500).json({ error: 'Internal Server Error' });
+        }
+      },
+      getAssessmentByMentor: async (req, res) => {
+        try {
+            const { mentorId } = req.params;
+            const assessments = await Assessment.findAll({
+                where: {
+                    mentorId,
+                },
+                attributes: ['id', 'title', 'description']
+            })
+            return res.status(200).json({ assessments })
+        } catch (error) {
+            console.error(error);
+            return res.status(500).json({ error: 'Internal Server Error'})
+        }
+      }
 }
 
 module.exports = {UserController}
