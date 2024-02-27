@@ -3,6 +3,7 @@ const { Op } = require('sequelize')
 const bcrypt = require('bcrypt') 
 const jwt = require('jsonwebtoken')
 const assessment = require('../models/assessment')
+const { validationResult } = require('express-validator')
 
 const Student = db.Student
 const Mentor = db.Mentor
@@ -53,11 +54,17 @@ const UserController = {
         }
     },
     login: async (req, res) => {
+        const errors = validationResult(req)
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array })
+        }
+
         try {
             const { email, password } =  req.body;
 
             const mentorUser = await Mentor.findOne({ where: { email }});
             const studentUser = await Student.findOne({ where: { email }})
+
             if (!mentorUser && !studentUser) {
                 return res.status(401).json({ error: 'Invalid email or password'})
             }
@@ -65,6 +72,7 @@ const UserController = {
 
             // compare passwords
             const isPasswordValid = await bcrypt.compare(password, user.password)
+            
             if (!isPasswordValid) {
                 return res.status(401).json({ error: 'Invalid email or password'})
             }
@@ -72,6 +80,8 @@ const UserController = {
             const role = mentorUser ? 'mentor' : 'student'
 
             const token = jwt.sign({ userId: user.id, role}, process.env.SECRET_KEY, { expiresIn: '1hr'})
+            res.cookie('token', token, { httpOnly: true })
+
             return res.status(200).json({ user: { id: user.id, name: user.name, email: user.email, role }, token})
         } catch (error) {
             console.error(error);
@@ -484,7 +494,52 @@ const UserController = {
             console.error(error);
             return res.status(500).json({ error: 'Internal Server Error'})
         }
-      }
+      },
+      getGradesByMentor: async (req, res) => {
+        try {
+          const { mentorId } = req.params;
+    
+          // Find assessments linked to the mentor
+          const assessments = await Assessment.findAll({
+            where: {
+              mentorId,
+            },
+            attributes: ['id'],
+          });
+    
+          // Extract assessment ids
+          const assessmentIds = assessments.map(assessment => assessment.id);
+    
+          // Find grades for students who completed assessments
+          const grades = await Grade.findAll({
+            attributes: ['studentId', 'assessmentId', 'grade'],
+            where: {
+              assessmentId: {
+                [Op.in]: assessmentIds,
+              },
+            },
+          });
+    
+          // Map student names, assessment titles, and grades
+          const gradeDetails = await Promise.all(
+            grades.map(async (grade) => {
+              const student = await Student.findByPk(grade.studentId);
+              const assessment = await Assessment.findByPk(grade.assessmentId);
+    
+              return {
+                studentName: student ? student.name : null,
+                assessmentTitle: assessment ? assessment.title : null,
+                grade: grade.grade,
+              };
+            })
+          );
+    
+          return res.status(200).json({ gradeDetails });
+        } catch (error) {
+          console.error(error);
+          return res.status(500).json({ error: 'Internal Server Error' });
+        }
+      },
 }
 
 module.exports = {UserController}
