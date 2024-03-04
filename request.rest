@@ -12,18 +12,18 @@ POST http://localhost:5000/api/registerStudent
 Content-Type: application/json
 
 {
-    "name": "sheila", 
-    "email": "sheila@gmail.com",
-    "password": "sheila"
+    "name": "june", 
+    "email": "june@gmail.com",
+    "password": "june"
 }
 
-###
+### 
 POST http://localhost:5000/api/login
 Content-Type: application/json
 
 {
-    "email": "sheila@gmail.com",
-    "password": "sheila"
+    "email": "june@gmail.com",
+    "password": "june"
 }
 
 
@@ -32,23 +32,34 @@ POST http://localhost:5000/api/assessments
 Content-Type: application/json
 
 {
-    "title": "Ass2",
-    "description": "This is a test assessment 2",
+    "title": "Ass12",
+    "description": "This is a test assessment 13",
     "mentorId": 1
 }
 
 ###
-POST http://localhost:5000/api/questions/1/2
+POST http://localhost:5000/api/questions/1/12
 Content-Type: application/json
 
 {
-    "title": "Question 4",
-    "choice1": "Opt A",
-    "choice2": "Opt B",
-    "choice3": "Opt C",
-    "choice4": "Opt D",
-    "correctChoice": "Opt A"
-
+  "questions": [
+    {
+      "title": "Question 1",
+      "choice1": "Opt A",
+      "choice2": "Opt B",
+      "choice3": "Opt C",
+      "choice4": "Opt D",
+      "correctChoice": "Opt A"
+    },
+    {
+      "title": "Question 2",
+      "choice1": "Opt X",
+      "choice2": "Opt Y",
+      "choice3": "Opt Z",
+      "choice4": "Opt W",
+      "correctChoice": "Opt Y"
+    }
+  ]
 }
 
 ###
@@ -66,22 +77,22 @@ POST http://localhost:5000/api/sendInvite
 Content-Type: application/json
 
 {
-    "mentorId": 1,
-    "studentId": 1,
-    "assessmentId": 2
+    "mentorId": "1",  
+    "studentIds": ["1", "15"],  
+    "assessmentId": "12"  
 }
+
 
 ###
 GET http://localhost:5000/api/notifications/1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInJvbGUiOiJzdHVkZW50IiwiaWF0IjoxNzA4MDcyNDk1LCJleHAiOjE3MDgwNzYwOTV9.Q25l0BHJM82g-_fF0wEnuBs5SlNn6wxOLWE5jzFzpmE
-
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInJvbGUiOiJzdHVkZW50IiwiaWF0IjoxNzA4MjQxMTMyLCJleHAiOjE3MDgyNDQ3MzJ9.cHGL21XPaEdvNw8oNQ8ctg-ta17Vnhm1_GwuKhm7iJg
 
 ###
 POST http://localhost:5000/api/acceptInvitation/2
 Content-Type: application/json
 
 {
-    "response": "accept"
+    "response": "decline"
 }
 
 ###
@@ -91,4 +102,21 @@ Content-Type:  application/json
 ###
 GET http://localhost:5000/api/questions/2
 Content-Type: application/json
+
+###
+GET http://localhost:5000/api/grades/1
+Content-Type: application/json
+
+###
+GET http://localhost:5000/api/students
+Content-Type: application/json
+
+###
+GET http://localhost:5000/api/assessments/1
+Content-Type: application/json
+
+###
+GET http://localhost:5000/api/allgrades/1
+Content-Type: application/json
+
 
