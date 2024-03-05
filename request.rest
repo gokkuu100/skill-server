@@ -2,9 +2,9 @@ POST http://localhost:5000/api/registerMentor
 Content-Type: application/json
 
 {
-    "name": "west",
-    "email": "west@gmail.com",
-    "password": "west"
+    "name": "prince",
+    "email": "prince@gmail.com",
+    "password": "prince"
 }
 
 ###
@@ -12,18 +12,25 @@ POST http://localhost:5000/api/registerStudent
 Content-Type: application/json
 
 {
-    "name": "june", 
-    "email": "june@gmail.com",
-    "password": "june"
+    "name": "West Olunga", 
+    "email": "West@gmail.com",
+    "password": "West",
+    "skills": ["Javascript", "Python", "NodeJS"],
+    "occupation": "Software Developer"
 }
+
+###
+GET http://localhost:5000/api/studentInfo/2 HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsInJvbGUiOiJzdHVkZW50IiwiaWF0IjoxNzA5NjYxNTU4LCJleHAiOjE3MDk2NjUxNTh9.jXt2DW2IUfQaAqavJk0aIP2DnOqbtqynwCxl5hsbBMM
 
 ### 
 POST http://localhost:5000/api/login
 Content-Type: application/json
 
 {
-    "email": "june@gmail.com",
-    "password": "june"
+    "email": "West@gmail.com",
+    "password": "West"
 }
 
 

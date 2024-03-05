@@ -43,14 +43,33 @@ const UserController = {
     },
     createStudent: async (req, res) => {
         try {
-            const { name, email, password } = req.body
+            const { name, email, password, skills, occupation } = req.body
             const hashedPassword = await bcrypt.hash(password, 10)
 
-            const newStudent = await Student.create({ name, email, password: hashedPassword })
+            const newStudent = await Student.create({ name, email, password: hashedPassword, skills: skills || [], occupation })
             return res.status(201).json(newStudent)
         } catch (error) {
             console.error(error);
             res.status(500).json({ error: 'Internal Server Error'})
+        }
+    },
+    getStudentInfo: async (req, res) => {
+        try {
+            const { studentId } = req.params;
+
+            const student = await Student.findByPk(studentId, {
+                attributes: {
+                    exclude: ['password']
+                },
+            })
+            if (!student) {
+                return res.status(404).json({ error: 'Student not found'})
+            }
+
+            return res.status(200).json(student)
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ error: "Internal Server Error"})
         }
     },
     login: async (req, res) => {
