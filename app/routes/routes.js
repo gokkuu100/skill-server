@@ -31,6 +31,7 @@ router.post('/acceptInvitation/:inviteId', passport.authenticate('jwt', {session
 router.get('/notifications/:studentId', passport.authenticate('jwt', { session: false }), UserController.getNotification)
 router.get('/student/:studentId', passport.authenticate('jwt', {session: false}), UserController.getAssessmentDetails);
 router.get('/studentInfo/:studentId', passport.authenticate('jwt', {session: false}), UserController.getStudentInfo);
+router.get('/mentorInfo/:mentorId', passport.authenticate('jwt', {session: false}), UserController.getMentorInfo);
 router.get('/questions/:assessmentId', passport.authenticate('jwt', {session: false}), UserController.getAssessmentQuestions)
 router.get('/grades/:studentId/', passport.authenticate('jwt', {session: false}), UserController.getStudentGrades)
 router.get('/students', passport.authenticate('jwt', {session: false}), UserController.getAllStudents)

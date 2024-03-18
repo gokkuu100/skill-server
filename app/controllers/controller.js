@@ -72,6 +72,35 @@ const UserController = {
             res.status(500).json({ error: "Internal Server Error"})
         }
     },
+    getMentorInfo: async (req, res) => {
+        try {
+            const { mentorId } = req.params;
+    
+            // Find the mentor
+            const mentor = await Mentor.findByPk(mentorId, {
+                attributes: ['id', 'name', 'email'], // Specify attributes you want to retrieve
+            });
+    
+            if (!mentor) {
+                return res.status(404).json({ error: 'Mentor not found' });
+            }
+    
+            // Find all assessments created by the mentor
+            const assessments = await Assessment.findAll({
+                where: {
+                    mentorId,
+                },
+                attributes: ['id', 'title', 'description'], // Specify attributes you want to retrieve
+            });
+    
+            // You can optionally include additional information like grades, number of questions, etc.
+    
+            return res.status(200).json({ mentor, assessments });
+        } catch (error) {
+            console.error(error);
+            return res.status(500).json({ error: 'Internal Server Error' });
+        }
+    },    
     login: async (req, res) => {
         const errors = validationResult(req)
         if (!errors.isEmpty()) {
