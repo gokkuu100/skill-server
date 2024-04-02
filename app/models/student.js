@@ -19,6 +19,14 @@ module.exports = (sequelize) => {
             type: DataTypes.STRING(255),
             allowNull: false
         },
+        skills: {
+            type: DataTypes.JSON,
+            allowNull: true
+        },
+        occupation: {
+            type: DataTypes.STRING(128),
+            allowNull: true
+        },
     })
     Student.associate = (models) => {
         Student.hasMany(models.Grade, {
