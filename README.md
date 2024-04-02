@@ -36,13 +36,12 @@ The following endpoints are available:
 
 ## Contributing
 
-Please read [CONTRIBUTING.md](https://github.com/your-username/your-repo/CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests to us.
+Please read [CONTRIBUTING.md](https://github.com/your-username/your-repo/CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests to me.
 
 ## Authors
 
-- **Your Name** - _Initial work_ - [Your Name](https://github.com/your-username)
+- **Prince Hope** - [gokkuu100](https://github.com/gokkuu100)
 
-See also the list of [contributors](https://github.com/your-username/your-repo/contributors) who participated in this project.
 
 ## License
 
