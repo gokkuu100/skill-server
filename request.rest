@@ -112,8 +112,9 @@ GET http://localhost:5000/api/student/1
 Content-Type:  application/json
 
 ###
-GET http://localhost:5000/api/questions/2
+GET http://localhost:5000/api/questions/8
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInJvbGUiOiJzdHVkZW50IiwiaWF0IjoxNzEwNzg5NzEwLCJleHAiOjE3MTA3OTMzMTB9.9O6hKxEgq7y2NdCKLV9DdnGgibtsAh7cDIZr_GAnAhI
 
 ###
 GET http://localhost:5000/api/grades/1
